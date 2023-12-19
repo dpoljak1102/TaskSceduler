@@ -22,13 +22,16 @@ namespace TaskSceduler.App.ViewModels
         {
             NavigationService = navigationService;
 
-            TaskCollections = new ObservableCollection<TaskModel> 
+
+
+            TaskCollections = new ObservableCollection<TaskModel>
             {
                 new TaskModel
                 {
-                    TrackerId = 1,
-                    ProjectType = "Feature",
-                    Status = "In Progress",
+                    TrackerId = Guid.NewGuid(),
+                    Subject = "Testing code A",
+                    ProjectType = "A",
+                    Status = "New",
                     Priority = "High",
                     StartDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(7),
@@ -36,15 +39,56 @@ namespace TaskSceduler.App.ViewModels
                 },
                 new TaskModel
                 {
-                    TrackerId = 2,
-                    ProjectType = "Feature",
+                    TrackerId = Guid.NewGuid(),
+                    Subject = "Testing B",
+                    ProjectType = "B",
+                    Status = "New",
+                    Priority = "High",
+                    StartDate = DateTime.Now,
+                    DueDate = DateTime.Now.AddDays(7),
+                    PercentageDone = 50
+                },
+                new TaskModel
+                {
+                    TrackerId = Guid.NewGuid(),
+                    Subject = "Setup new task",
+                    ProjectType = "C",
                     Status = "In Progress",
                     Priority = "Low",
                     StartDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(15),
-                    PercentageDone = 0
+                    PercentageDone = 75
+                },
+                new TaskModel
+                {
+                    TrackerId = Guid.NewGuid(),
+                    Subject = "Testing code D",
+                    ProjectType = "D",
+                    Status = "New",
+                    Priority = "Normal",
+                    StartDate = DateTime.Now,
+                    DueDate = DateTime.Now,
+                    PercentageDone = 100
                 },
             };
+
+            // Only for GUI testing
+            // TODO : need implement class libary for task sceduler
+            var task1 = new TaskModel
+            {
+                Subject = "Currently working Z",
+                ProjectType = "Z",
+                Status = "In Progress",
+                Priority = "High",
+                StartDate = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(7),
+                PercentageDone = 0
+            };
+
+            // Only for GUI testing
+            // TODO : need implement class libary for task sceduler
+            TaskCollections.Add(task1);
+            task1.StartUpdatingPercentage();
         }
 
        

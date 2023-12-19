@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TaskSceduler.App.Core;
 
 namespace TaskSceduler.App.Models
@@ -6,14 +7,21 @@ namespace TaskSceduler.App.Models
     public class TaskModel:ObservableObject
     {
 
-        private int _trackerId;
-        public int TrackerId
+        private Guid _trackerId = Guid.NewGuid();
+        public Guid TrackerId
         {
             get { return _trackerId; }
             set { _trackerId = value; OnPropertyChanged(); }
         }
 
-        private string _projectType;
+        private string _subject = "";
+        public string Subject
+        {
+            get { return _subject; }
+            set { _subject = value; OnPropertyChanged(); }
+        }
+
+        private string _projectType = "";
         public string ProjectType
         {
             get { return _projectType; }
@@ -34,7 +42,7 @@ namespace TaskSceduler.App.Models
 			set { _priority = value; OnPropertyChanged(); }
 		}
 
-		private DateTime _startDate;
+		private DateTime _startDate = DateTime.Now;
 		public DateTime StartDate
 		{
 			get { return _startDate;}
@@ -45,7 +53,7 @@ namespace TaskSceduler.App.Models
         public DateTime DueDate
         {
             get { return _dueDate; }
-            set { _dueDate = value; OnPropertyChanged(); }
+            set { _dueDate = value; OnPropertyChanged();}
         }
 
         private int _percentageDone;
@@ -62,6 +70,30 @@ namespace TaskSceduler.App.Models
                     _percentageDone = value;
                 OnPropertyChanged();
             }
+        }
+
+
+        //Dummy task for later
+        public async void StartUpdatingPercentage()
+        {
+            while (PercentageDone<100) 
+            {
+                UpdatePercentageDoneAsync();
+                await Task.Delay(1000); 
+            }
+        }
+
+        private void UpdatePercentageDoneAsync()
+        {
+            Random random = new Random();
+            var randomPercentage = random.Next(5, 20);
+
+            PercentageDone += randomPercentage;
+         
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                OnPropertyChanged(nameof(PercentageDone));
+            });
         }
 
     }

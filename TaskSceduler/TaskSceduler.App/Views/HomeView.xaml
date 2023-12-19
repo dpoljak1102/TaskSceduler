@@ -6,8 +6,114 @@
              xmlns:local="clr-namespace:TaskSceduler.App.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Button>
-            Dynamically loaded content from HomeViewModel</Button>
+    <Grid Margin="10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition />
+            <RowDefinition Height="20"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <TextBlock Text="Task list" 
+                       FontFamily="Arial"
+                       FontSize="23"/>
+            <Separator VerticalAlignment="Bottom" />
+        </Grid>
+        
+        <ListView Grid.Row="1"
+                  Background="#c2e4e9"
+                  BorderThickness="0"
+                  BorderBrush="Transparent"
+                  VerticalAlignment="Top"
+                  ItemsSource="{Binding TaskCollections, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedTask,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Subject}"
+                                           FontSize="18"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+                                
+                                <TextBlock Text="{Binding TrackerId}"
+                                           FontSize="11"
+                                           Margin="2,0"
+                                           HorizontalAlignment="Left"/>
+                            </StackPanel>
+                            
+                        </Grid>
+
+                        <Grid Grid.Column="1">
+                            <StackPanel>
+                                <TextBlock Text="Priority"
+                                           FontSize="15"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+
+                                <TextBlock Text="{Binding Priority}"
+                                           FontSize="11"
+                                           Margin="2,0"
+                                           HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <Grid Grid.Column="2">
+                            <StackPanel>
+                                <TextBlock Text="Status"
+                                           FontSize="15"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding Status}"
+                                           FontSize="11"
+                                           Margin="2,0"
+                                           HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="3">
+                            <StackPanel>
+                                <TextBlock Text="Type"
+                                           FontSize="15"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+                                
+                                <TextBlock Text="{Binding ProjectType}"
+                                           FontSize="11"
+                                           Margin="2,0"
+                                           HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="4">
+                            <StackPanel>
+                                <TextBlock Text="Progress"
+                                           FontSize="15"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+                                <ProgressBar Value="{Binding PercentageDone}" Maximum="100"
+                                             Margin="0,2"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Height="10"
+                                             Width="200"/>
+                            </StackPanel>
+                        </Grid>
+
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
     </Grid>
 </UserControl>
