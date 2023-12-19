@@ -7,7 +7,7 @@ namespace TaskSceduler.App.Service
 {
     public class NavigationService : ObservableObject, INavigationService
     {
-        private ViewModelBase? _currentView;
+        private ViewModelBase _currentView;
         public ViewModelBase CurrentView
         {
             get => _currentView!;

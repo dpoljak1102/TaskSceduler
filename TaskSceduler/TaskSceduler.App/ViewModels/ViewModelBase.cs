@@ -5,9 +5,9 @@ namespace TaskSceduler.App.ViewModels
 {
     public abstract class ViewModelBase : ObservableObject
     {
-        private INavigationService? _navigationService;
+        private INavigationService _navigationService;
 
-        public INavigationService? NavigationService
+        public INavigationService NavigationService
         {
             get => _navigationService;
             set { _navigationService = value; OnPropertyChanged(); }

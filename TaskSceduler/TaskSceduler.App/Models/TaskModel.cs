@@ -13,7 +13,7 @@ namespace TaskSceduler.App.Models
             set { _trackerId = value; OnPropertyChanged(); }
         }
 
-        private string _projectType = "";
+        private string _projectType;
         public string ProjectType
         {
             get { return _projectType; }

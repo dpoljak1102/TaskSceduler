@@ -11,6 +11,6 @@ namespace TaskSceduler.App.Service.Common
     /// </summary>
     public interface IHandleParameters
     {
-        void HandleParameters(object? parameters);
+        void HandleParameters(object parameters);
     }
 }

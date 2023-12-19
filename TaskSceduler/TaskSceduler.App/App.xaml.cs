@@ -18,7 +18,7 @@ namespace TaskSceduler.App
     public partial class App : Application
     {
 
-        private readonly ServiceProvider? _serviceProvider;
+        private readonly ServiceProvider _serviceProvider;
 
         public App()
         {
