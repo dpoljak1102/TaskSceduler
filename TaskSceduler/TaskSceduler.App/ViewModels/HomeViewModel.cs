@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
+using TaskSceduler.App.Core;
 using TaskSceduler.App.Models;
 using TaskSceduler.App.Service.Common;
 
@@ -15,13 +17,21 @@ namespace TaskSceduler.App.ViewModels
             get { return _taskCollections; }
             set { _taskCollections = value; OnPropertyChanged(); }
         }
-        
+
         #endregion
+
+        #region ICommands
+
+        public ICommand NavigateCreateViewCommand { get; set; }
+
+        #endregion
+
 
         public HomeViewModel(INavigationService navigationService)
         {
             NavigationService = navigationService;
 
+            NavigateCreateViewCommand = new RelayCommand(obj => { NavigationService.NavigateTo<CreateViewModel>();});
 
 
             TaskCollections = new ObservableCollection<TaskModel>

@@ -18,6 +18,7 @@ namespace TaskSceduler.App.Service
         // This is injected via the constructor
         private readonly Func<Type, ViewModelBase> _viewModelFactory;
 
+
         public NavigationService(Func<Type, ViewModelBase> viewModelFactory)
         {
             _viewModelFactory = viewModelFactory;

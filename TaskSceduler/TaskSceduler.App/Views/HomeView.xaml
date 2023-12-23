@@ -9,8 +9,8 @@
     <Grid Margin="10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
-            <RowDefinition />
-            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -115,5 +115,14 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <Grid Grid.Row="2"
+              Margin="5,15">
+            <Button Content="Create task"
+                    Command="{Binding NavigateCreateViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Width="180"
+                    Height="30"/>
+        </Grid>
     </Grid>
 </UserControl>

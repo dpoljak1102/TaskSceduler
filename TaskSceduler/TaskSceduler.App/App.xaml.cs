@@ -32,6 +32,7 @@ namespace TaskSceduler.App
             // TODO : AddTransient, AddScoped and AddSingleton Services Differences
             service.AddSingleton<MainViewModel>();
             service.AddSingleton<HomeViewModel>();
+            service.AddSingleton<CreateViewModel>();
 
             service.AddSingleton<INavigationService, NavigationService>();
             service.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider => viewModelType => (ViewModelBase)serviceProvider.GetRequiredService(viewModelType));
