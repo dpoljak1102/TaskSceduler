@@ -29,6 +29,7 @@ namespace TaskSceduler.App
                 DataContext = provider.GetRequiredService<MainViewModel>()
             });
 
+            // TODO : AddTransient, AddScoped and AddSingleton Services Differences
             service.AddSingleton<MainViewModel>();
             service.AddSingleton<HomeViewModel>();
 
