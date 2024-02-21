@@ -7,7 +7,7 @@ namespace TaskSceduler.App.ViewModels
         public MainViewModel(INavigationService navigationService)
         {
             NavigationService = navigationService;
-            NavigationService.NavigateTo<HomeViewModel>();
+            NavigationService.NavigateTo<InitViewModel>(); //HomeViewModel
         }
     }
 }

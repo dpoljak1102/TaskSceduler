@@ -36,6 +36,10 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
@@ -108,6 +112,38 @@
                                              Height="10"
                                              Width="200"/>
                             </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="5">
+                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                                <Button.Content>
+                                    <Image Source="/Views/play.png" Width="30" Height="30"></Image>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+
+                        <Grid Grid.Column="6">
+                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                                <Button.Content>
+                                    <Image Source="/Views/pause.png" Width="30" Height="30"></Image>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+
+                        <Grid Grid.Column="7">
+                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                                <Button.Content>
+                                    <Image Source="/Views/stop.png" Width="30" Height="30"></Image>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+
+                        <Grid Grid.Column="8">
+                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                                <Button.Content>
+                                    <Image Source="/Views/delete.png" Width="30" Height="30"></Image>
+                                </Button.Content>
+                            </Button>
                         </Grid>
 
                     </Grid>

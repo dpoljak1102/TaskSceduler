@@ -7,9 +7,68 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Button Content="Go back"
-         Command="{Binding NavigateHomeViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-         VerticalAlignment="Center"
-         HorizontalAlignment="Center"/>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+            
+                <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="Job Name" Height="30" Width="100" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontFamily="Arial Rounded MT Bold"/>
+                    <TextBox Height="30" TextWrapping="Wrap" Width="200" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" FontFamily="Arial Rounded MT Bold" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="Priority" Height="30" Width="100" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontFamily="Arial Rounded MT Bold"/>
+                    <ComboBox Height="30" Width="200" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" FontFamily="Arial Rounded MT Bold" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black">
+                        <ComboBoxItem Content="Low"/>
+                        <ComboBoxItem Content="Normal"/>
+                        <ComboBoxItem Content="High"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="Time of execution [ms]" Height="30" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontFamily="Arial Rounded MT Bold"/>
+                    <TextBox Height="30" TextWrapping="Wrap" Width="200" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" FontFamily="Arial Rounded MT Bold" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label x:Name="JobType" Content="Job Type" Height="30" Width="100" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontFamily="Arial Rounded MT Bold"/>
+                    <ListBox x:Name="JobTypeListBox" MinWidth="370" ScrollViewer.VerticalScrollBarVisibility="Auto" FontWeight="Bold" MinHeight="25" Width="370" Height="25"></ListBox>
+                    <TextBox x:Name="UserJobJsonTextBox" Margin="5,5,5,5" MinWidth="370" AcceptsReturn="True" AcceptsTab="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="270" Width="370" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <CheckBox x:Name="BeginCheckBox" Content="Begin Date" Height="25" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Arial Rounded MT Bold" FontSize="15" Checked="CheckBox_Checked"/>
+                    <DatePicker IsEnabled="{Binding IsChecked, ElementName=BeginCheckBox}" Height="30" Width="180" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"/>
+                    <TextBox IsEnabled="{Binding IsChecked, ElementName=BeginCheckBox}" x:Name="beginTimeBox" Height="30" TextWrapping="Wrap" Text="HH-mm-ss" Width="180" HorizontalAlignment="Center" Margin="0,10,0,0" FontFamily="Arial Rounded MT Bold" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" GotFocus="beginTimeBox_GotFocus"/>
+                    <CheckBox x:Name="DeadlineCheckBox" Content="Deadline" Width="100" HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Margin="0,30,0,0" FontFamily="Arial Rounded MT Bold" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <DatePicker IsEnabled="{Binding IsChecked, ElementName=DeadlineCheckBox}" Height="30" Width="180" Background="White" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox IsEnabled="{Binding IsChecked, ElementName=DeadlineCheckBox}" x:Name="deadlineTimeBox" Height="30" TextWrapping="Wrap" Text="HH-mm-ss" Width="180" FontFamily="Arial Rounded MT Bold" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" GotFocus="deadlineTimeBox_GotFocus" Margin="0,10,0,0" HorizontalAlignment="Center" TextChanged="deadlineTimeBox_TextChanged"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <Button Content="Cancel"
+                    Command="{Binding NavigateHomeViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Background="#FFDC3737"
+                    Width="100" Height="30" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,0"/>
+                    <Button Content="Finish"
+                    Command="{Binding NavigateHomeViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Background="#FF4BBE50"
+                    Width="100" Height="30" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
     </Grid>
 </UserControl>

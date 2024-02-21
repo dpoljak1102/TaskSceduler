@@ -18,6 +18,10 @@
             <DataTemplate DataType="{x:Type viewModels:CreateViewModel}">
                 <view:CreateView />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModels:InitViewModel}">
+                <view:InitView />
+            </DataTemplate>
             <!--#endregion-->
 
         </ResourceDictionary>

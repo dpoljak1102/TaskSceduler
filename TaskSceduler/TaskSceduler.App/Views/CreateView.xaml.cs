@@ -24,5 +24,33 @@ namespace TaskSceduler.App.Views
         {
             InitializeComponent();
         }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void beginTimeBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (beginTimeBox.Text == "HH-mm-ss")
+            {
+                beginTimeBox.Text = "";
+                beginTimeBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void deadlineTimeBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (deadlineTimeBox.Text == "HH-mm-ss")
+            {
+                deadlineTimeBox.Text = "";
+                deadlineTimeBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void deadlineTimeBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
