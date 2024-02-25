@@ -7,7 +7,7 @@ using TaskSceduler.App.Service.Common;
 
 namespace TaskSceduler.App.ViewModels
 {
-    public class HomeViewModel : ViewModelBase
+    public class HomeViewModel : ViewModelBase, IHandleParameters
     {
         #region Fileds
 
@@ -101,6 +101,13 @@ namespace TaskSceduler.App.ViewModels
             task1.StartUpdatingPercentage();
         }
 
-       
+
+        public void HandleParameters(object parameters)
+        {
+            if (parameters is TaskModel task && task != null)
+            {
+                TaskCollections.Add(parameters as TaskModel);
+            }
+        }
     }
 }

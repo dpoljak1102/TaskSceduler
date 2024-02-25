@@ -19,17 +19,41 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
             
-                <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Label Content="Job Name" Height="30" Width="100" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontFamily="Arial Rounded MT Bold"/>
-                    <TextBox Height="30" TextWrapping="Wrap" Width="200" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" FontFamily="Arial Rounded MT Bold" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black"/>
+                <StackPanel Grid.Row="0"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"> 
+                    <Label Content="Job Name"
+                           Height="30"
+                           Width="100"
+                           FontSize="15"
+                           FontFamily="Arial Rounded MT Bold"/>
+                    <TextBox Height="30" 
+                             Width="200"
+                             FontSize="15"
+                             Text="{Binding Subject, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                             FontFamily="Arial Rounded MT Bold"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Label Content="Priority" Height="30" Width="100" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Bottom" FontFamily="Arial Rounded MT Bold"/>
-                    <ComboBox Height="30" Width="200" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="15" FontFamily="Arial Rounded MT Bold" HorizontalAlignment="Left" VerticalAlignment="Center" BorderBrush="Black">
-                        <ComboBoxItem Content="Low"/>
-                        <ComboBoxItem Content="Normal"/>
-                        <ComboBoxItem Content="High"/>
+                <StackPanel Grid.Row="0"
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Label Content="Priority"
+                           Height="30"
+                           Width="100"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top"
+                           FontSize="15"
+                           HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Bottom"
+                           FontFamily="Arial Rounded MT Bold"/>
+                    <ComboBox Height="30"
+                              Width="200"
+                              FontSize="15"
+                              FontFamily="Arial Rounded MT Bold"
+                              VerticalAlignment="Center"
+                              ItemsSource="{Binding AvailablePriority}"
+                              SelectedItem="{Binding Priority, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                     </ComboBox>
                 </StackPanel>
 
@@ -62,7 +86,7 @@
                     Background="#FFDC3737"
                     Width="100" Height="30" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,0"/>
                     <Button Content="Finish"
-                    Command="{Binding NavigateHomeViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Command="{Binding CreateNewTaskCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Background="#FF4BBE50"
                     Width="100" Height="30" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
                     </StackPanel>

@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Views\delete.png" />
-    <Resource Include="Views\pause.png" />
-    <Resource Include="Views\play.png" />
-    <Resource Include="Views\stop.png" />
+    <Resource Include="Assets\Images\delete.png" />
+    <Resource Include="Assets\Images\pause.png" />
+    <Resource Include="Assets\Images\play.png" />
+    <Resource Include="Assets\Images\stop.png" />
   </ItemGroup>
 
 </Project>

@@ -6,13 +6,6 @@ namespace TaskSceduler.App.ViewModels
 {
     public class InitViewModel : ViewModelBase
     {
-        #region Fileds
-
-        private string _maxConJobs;
-        public string MaxConJobs { get; set; }
-
-        #endregion
-
         #region ICommands
         public ICommand NavigateHomeViewCommand { get; set; }
 
