@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows.Input;
 using TaskSceduler.App.Core;
 using TaskSceduler.App.Models;
@@ -24,6 +25,26 @@ namespace TaskSceduler.App.ViewModels
 
         public ICommand NavigateCreateViewCommand { get; set; }
 
+        public ICommand EnableViewCommand { get; set; }
+
+        #endregion
+
+        #region Bindings
+
+        private int _maxConcurrentJobs = 1;
+        public int MaxConcurrentJobs
+        {
+            get { return _maxConcurrentJobs; }
+            set { _maxConcurrentJobs = value; OnPropertyChanged(); }
+        }
+
+        private bool _isEnabled = false;
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set { _isEnabled = value; OnPropertyChanged(); }
+        }
+
         #endregion
 
 
@@ -33,6 +54,7 @@ namespace TaskSceduler.App.ViewModels
 
             NavigateCreateViewCommand = new RelayCommand(obj => { NavigationService.NavigateTo<CreateViewModel>();});
 
+            EnableViewCommand = new RelayCommand(obj => { IsEnabled = true; });
 
             TaskCollections = new ObservableCollection<TaskModel>
             {
@@ -45,7 +67,8 @@ namespace TaskSceduler.App.ViewModels
                     Priority = "High",
                     StartDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(7),
-                    PercentageDone = 50
+                    PercentageDone = 50,
+                    State = TaskModel.TaskState.Finished
                 },
                 new TaskModel
                 {
@@ -56,7 +79,7 @@ namespace TaskSceduler.App.ViewModels
                     Priority = "High",
                     StartDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(7),
-                    PercentageDone = 50
+                    PercentageDone = 50,
                 },
                 new TaskModel
                 {
@@ -67,7 +90,8 @@ namespace TaskSceduler.App.ViewModels
                     Priority = "Low",
                     StartDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(15),
-                    PercentageDone = 75
+                    PercentageDone = 75,
+                    State = TaskModel.TaskState.Paused
                 },
                 new TaskModel
                 {
@@ -78,7 +102,8 @@ namespace TaskSceduler.App.ViewModels
                     Priority = "Normal",
                     StartDate = DateTime.Now,
                     DueDate = DateTime.Now,
-                    PercentageDone = 100
+                    PercentageDone = 100,
+                    State = TaskModel.TaskState.Stopped
                 },
             };
 
@@ -92,7 +117,8 @@ namespace TaskSceduler.App.ViewModels
                 Priority = "High",
                 StartDate = DateTime.Now,
                 DueDate = DateTime.Now.AddDays(7),
-                PercentageDone = 0
+                PercentageDone = 0,
+                State = TaskModel.TaskState.Running
             };
 
             // Only for GUI testing

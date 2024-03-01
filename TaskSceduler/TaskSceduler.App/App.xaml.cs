@@ -33,7 +33,6 @@ namespace TaskSceduler.App
             service.AddSingleton<MainViewModel>();
             service.AddSingleton<HomeViewModel>();
             service.AddTransient<CreateViewModel>();
-            service.AddSingleton<InitViewModel>();
 
             service.AddSingleton<INavigationService, NavigationService>();
             service.AddSingleton<Func<Type, ViewModelBase>>(serviceProvider => viewModelType => (ViewModelBase)serviceProvider.GetRequiredService(viewModelType));

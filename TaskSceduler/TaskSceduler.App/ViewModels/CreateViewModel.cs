@@ -58,14 +58,14 @@ namespace TaskSceduler.App.ViewModels
             set { _priority = value; OnPropertyChanged(); }
         }
 
-        private DateTime _startDate;
+        private DateTime _startDate = DateTime.Now;
         public DateTime StartDate
         {
             get { return _startDate; }
             set { _startDate = value; OnPropertyChanged(); }
         }
 
-        private DateTime _dueDate;
+        private DateTime _dueDate = DateTime.Now.AddDays(7);
         public DateTime DueDate
         {
             get { return _dueDate; }
@@ -77,6 +77,13 @@ namespace TaskSceduler.App.ViewModels
         {
             get { return _percentageDone; }
             set { _percentageDone = value; OnPropertyChanged(); }
+        }
+
+        private int _executionTime;
+        public int ExecutionTime
+        {
+            get { return _executionTime; }
+            set { _executionTime = value; OnPropertyChanged(); }
         }
         #endregion
 
@@ -101,9 +108,10 @@ namespace TaskSceduler.App.ViewModels
                     ProjectType = "B",
                     Status = "New",
                     Priority = Priority,
-                    StartDate = DateTime.Now,
-                    DueDate = DateTime.Now.AddDays(7),
-                    PercentageDone = 50
+                    StartDate = StartDate,
+                    DueDate = DueDate,
+                    PercentageDone = 50,
+                    ExecutionTime = ExecutionTime
                 });
             });
         }

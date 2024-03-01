@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using TaskSceduler.App.Core;
+using TaskSceduler.App.Service.Common;
 
 namespace TaskSceduler.App.Models
 {
@@ -72,15 +74,47 @@ namespace TaskSceduler.App.Models
             }
         }
 
+        private int _executionTime;
+        public int ExecutionTime
+        {
+            get { return _executionTime; }
+            set { _executionTime = value; OnPropertyChanged(); }
+        }
+
+        public enum TaskState
+        {
+            NotStarted,
+            Running,
+            Paused,
+            Stopped,
+            Finished
+        }
+
+        private TaskState _state = TaskState.NotStarted;
+        public TaskState State {
+            get { return _state; }
+            set {  _state = value; OnPropertyChanged(); }
+        }
+
+        private readonly object _lock = new();
+        internal Action OnPaused { get; set; } = () => { };
+        internal Action OnStopped { get; set; } = () => { };
+        internal Action OnFinished { get; set; } = () => { };
+        internal Action<TaskModel> OnResumeRequested { get; set; } = (TaskModel task) => { };
+
+        private IUserJob _job;
+        public IUserJob Job { get { return _job; } set { _job = value; } }
+
 
         //Dummy task for later
         public async void StartUpdatingPercentage()
         {
-            while (PercentageDone<100) 
+            while (PercentageDone < 100) 
             {
                 UpdatePercentageDoneAsync();
                 await Task.Delay(1000); 
             }
+            State = TaskState.Finished;
         }
 
         private void UpdatePercentageDoneAsync()
@@ -96,5 +130,95 @@ namespace TaskSceduler.App.Models
             });
         }
 
+        internal void Start() //Resume ujedno
+        {
+            lock (_lock)
+            {
+                switch (_state)
+                {
+                    case TaskState.NotStarted:
+                        StartUpdatingPercentage();
+                        State = TaskState.Running;
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            OnPropertyChanged(nameof(State));
+                        });
+                        break; //TODO
+                    case TaskState.Running:
+                        break; //Ignore if already running
+                    case TaskState.Paused:
+                        OnResumeRequested(this);
+                        StartUpdatingPercentage();
+                        State = TaskState.Running;
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            OnPropertyChanged(nameof(State));
+                        });
+                        break; //TODO
+                    case TaskState.Stopped:
+                        throw new InvalidOperationException("Cant start a task once its stopped!");
+                    case TaskState.Finished:
+                        throw new InvalidOperationException("Cant start a task that is already finished!");
+                }
+            }
+        }
+
+        internal void Pause()
+        {
+            lock (_lock)
+            {
+                switch (_state)
+                {
+                    case TaskState.NotStarted:
+                        throw new InvalidOperationException("Cant pause a task that is not started!");
+                    case TaskState.Running:
+                        OnPaused();
+                        State = TaskState.Paused;
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            OnPropertyChanged(nameof(State));
+                        });
+                        break; //TODO
+                    case TaskState.Paused:
+                        break; //Ignore
+                    case TaskState.Stopped:
+                        throw new InvalidOperationException("Cant pause a task that is stopped!");
+                    case TaskState.Finished:
+                        throw new InvalidOperationException("Cant pause a task that is already finished!");
+                }
+            }
+        }
+
+        internal void Stop()
+        {
+            lock (_lock)
+            {
+                switch (_state)
+                {
+                    case TaskState.NotStarted:
+                        throw new InvalidOperationException("Cant stop a task that is not started!");
+                    case TaskState.Running:
+                        OnStopped();
+                        State = TaskState.Stopped;
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            OnPropertyChanged(nameof(State));
+                        });
+                        break; //TODO
+                    case TaskState.Paused:
+                        OnStopped();
+                        this.State = TaskState.Stopped;
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            OnPropertyChanged(nameof(State));
+                        });
+                        break; //TODO
+                    case TaskState.Stopped:
+                        break; //Ignore
+                    case TaskState.Finished:
+                        throw new InvalidOperationException("Cant stop a task that is finished!");
+                }
+            }
+        }
     }
 }

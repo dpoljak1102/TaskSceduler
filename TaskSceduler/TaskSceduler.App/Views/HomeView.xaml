@@ -74,11 +74,11 @@
                         
                         <Grid Grid.Column="2">
                             <StackPanel>
-                                <TextBlock Text="Status"
+                                <TextBlock Text="State"
                                            FontSize="15"
                                            FontFamily="Arial"
                                            HorizontalAlignment="Left"/>
-                                <TextBlock Text="{Binding Status}"
+                                <TextBlock Text="{Binding State}"
                                            FontSize="11"
                                            Margin="2,0"
                                            HorizontalAlignment="Left"/>
@@ -115,33 +115,33 @@
                         </Grid>
 
                         <Grid Grid.Column="5">
-                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickStart">
                                 <Button.Content>
-                                    <Image Source="/Views/play.png" Width="30" Height="30"></Image>
+                                    <Image Source="/Assets/Images/play.png" Width="30" Height="30"></Image>
                                 </Button.Content>
                             </Button>
                         </Grid>
 
                         <Grid Grid.Column="6">
-                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickPause">
                                 <Button.Content>
-                                    <Image Source="/Views/pause.png" Width="30" Height="30"></Image>
+                                    <Image Source="/Assets/Images/pause.png" Width="30" Height="30"></Image>
                                 </Button.Content>
                             </Button>
                         </Grid>
 
                         <Grid Grid.Column="7">
-                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickStop">
                                 <Button.Content>
-                                    <Image Source="/Views/stop.png" Width="30" Height="30"></Image>
+                                    <Image Source="/Assets/Images/stop.png" Width="30" Height="30"></Image>
                                 </Button.Content>
                             </Button>
                         </Grid>
 
                         <Grid Grid.Column="8">
-                            <Button Background="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickDelete">
                                 <Button.Content>
-                                    <Image Source="/Views/delete.png" Width="30" Height="30"></Image>
+                                    <Image Source="/Assets/Images/delete.png" Width="30" Height="30"></Image>
                                 </Button.Content>
                             </Button>
                         </Grid>
@@ -155,10 +155,39 @@
               Margin="5,15">
             <Button Content="Create task"
                     Command="{Binding NavigateCreateViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    IsEnabled="{Binding IsEnabled}"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Width="180"
                     Height="30"/>
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Width="280">
+                <TextBlock Text="Max number of concurrent jobs: "
+                           FontSize="12"
+                           Width="180"
+                           Height="30"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                <TextBox Text="{Binding MaxConcurrentJobs}"
+                         Name="MaxConcurrentJobsNumber"
+                         Width="50"
+                         Height="20"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Top"
+                         HorizontalContentAlignment="Center"
+                         FontSize="12"/>
+                <Button Content="START"
+                        Command="{Binding EnableViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Width="50"
+                        Height="20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        HorizontalContentAlignment="Center"
+                        FontSize="12" 
+                        Click="Initialize"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>
