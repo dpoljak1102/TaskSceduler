@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 using TaskSceduler.App.Core;
 using TaskSceduler.App.Models;
 using TaskSceduler.App.Service.Common;
+using static TaskSceduler.App.Models.TaskModel;
 
 namespace TaskSceduler.App.ViewModels
 {
     public class HomeViewModel : ViewModelBase, IHandleParameters
     {
-        #region Fileds
-
         private ObservableCollection<TaskModel> _taskCollections;
         public ObservableCollection<TaskModel> TaskCollections
         {
@@ -19,114 +22,86 @@ namespace TaskSceduler.App.ViewModels
             set { _taskCollections = value; OnPropertyChanged(); }
         }
 
-        #endregion
+        private TaskModel _selectedTask;
+        public TaskModel SelectedTask
+        {
+            get { return _selectedTask; }
+            set { _selectedTask = value; OnPropertyChanged(); }
+        }
 
-        #region ICommands
 
-        public ICommand NavigateCreateViewCommand { get; set; }
+        private SemaphoreSlim _semaphoreSlim;
+        public SemaphoreSlim SemaphoreSlim
+        {
+            get { return _semaphoreSlim; }
+            set { _semaphoreSlim = value; OnPropertyChanged(); }
+        }
 
-        public ICommand EnableViewCommand { get; set; }
-
-        #endregion
-
-        #region Bindings
-
-        private int _maxConcurrentJobs = 1;
+        private int _maxConcurrentJobs;
         public int MaxConcurrentJobs
         {
             get { return _maxConcurrentJobs; }
             set { _maxConcurrentJobs = value; OnPropertyChanged(); }
         }
 
-        private bool _isEnabled = false;
-        public bool IsEnabled
-        {
-            get { return _isEnabled; }
-            set { _isEnabled = value; OnPropertyChanged(); }
-        }
-
-        #endregion
-
+        public ICommand NavigateCreateViewCommand { get; set; }
+        public ICommand StartTaskCommand { get; set; }
+        public ICommand StopTaskCommand { get; set; }
+        public ICommand DeleteTaskCommand { get; set; }
+        public ICommand StartAllTasksCommand { get; set; }
 
         public HomeViewModel(INavigationService navigationService)
         {
             NavigationService = navigationService;
+            NavigateCreateViewCommand = new RelayCommand(obj => { NavigationService.NavigateTo<CreateViewModel>(); });
+            TaskCollections = new ObservableCollection<TaskModel> { };
+            _semaphoreSlim = new SemaphoreSlim(MaxConcurrentJobs);
 
-            NavigateCreateViewCommand = new RelayCommand(obj => { NavigationService.NavigateTo<CreateViewModel>();});
+            StartTaskCommand = new RelayCommand(
+                async obj =>
+                {
+                    if (obj is TaskModel task)
+                    {
+                        await SemaphoreSlim.WaitAsync();
+                        try
+                        {
+                            await task.StartTaskActionAsync();
+                        }
+                        finally
+                        {
+                            SemaphoreSlim.Release();
+                        }
+                    }
+                }
+            );
 
-            EnableViewCommand = new RelayCommand(obj => { IsEnabled = true; });
+            StartAllTasksCommand = new RelayCommand(
+               async obj =>
+               {
+                   await StartAllTasksAsync();
+               }
+           );
 
-            TaskCollections = new ObservableCollection<TaskModel>
+            StopTaskCommand = new RelayCommand(obj =>
             {
-                new TaskModel
+                if (obj is TaskModel task)
                 {
-                    TrackerId = Guid.NewGuid(),
-                    Subject = "Testing code A",
-                    ProjectType = "A",
-                    Status = "New",
-                    Priority = "High",
-                    StartDate = DateTime.Now,
-                    DueDate = DateTime.Now.AddDays(7),
-                    PercentageDone = 50,
-                    State = TaskModel.TaskState.Finished
-                },
-                new TaskModel
-                {
-                    TrackerId = Guid.NewGuid(),
-                    Subject = "Testing B",
-                    ProjectType = "B",
-                    Status = "New",
-                    Priority = "High",
-                    StartDate = DateTime.Now,
-                    DueDate = DateTime.Now.AddDays(7),
-                    PercentageDone = 50,
-                },
-                new TaskModel
-                {
-                    TrackerId = Guid.NewGuid(),
-                    Subject = "Setup new task",
-                    ProjectType = "C",
-                    Status = "In Progress",
-                    Priority = "Low",
-                    StartDate = DateTime.Now,
-                    DueDate = DateTime.Now.AddDays(15),
-                    PercentageDone = 75,
-                    State = TaskModel.TaskState.Paused
-                },
-                new TaskModel
-                {
-                    TrackerId = Guid.NewGuid(),
-                    Subject = "Testing code D",
-                    ProjectType = "D",
-                    Status = "New",
-                    Priority = "Normal",
-                    StartDate = DateTime.Now,
-                    DueDate = DateTime.Now,
-                    PercentageDone = 100,
-                    State = TaskModel.TaskState.Stopped
-                },
-            };
+                    task?.StopTaskAction();
+                }
 
-            // Only for GUI testing
-            // TODO : need implement class libary for task sceduler
-            var task1 = new TaskModel
+            });
+
+            DeleteTaskCommand = new RelayCommand(obj =>
             {
-                Subject = "Currently working Z",
-                ProjectType = "Z",
-                Status = "In Progress",
-                Priority = "High",
-                StartDate = DateTime.Now,
-                DueDate = DateTime.Now.AddDays(7),
-                PercentageDone = 0,
-                State = TaskModel.TaskState.Running
-            };
+                if (obj is TaskModel task)
+                {
+                    task?.StopTaskAction();
 
-            // Only for GUI testing
-            // TODO : need implement class libary for task sceduler
-            TaskCollections.Add(task1);
-            task1.StartUpdatingPercentage();
+                    if (TaskCollections != null)
+                        TaskCollections.Remove(task);
+                }
+            });
         }
-
 
         public void HandleParameters(object parameters)
         {
@@ -135,5 +110,75 @@ namespace TaskSceduler.App.ViewModels
                 TaskCollections.Add(parameters as TaskModel);
             }
         }
+
+
+        private async Task StartAllTasksAsync()
+        {
+            await App.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                SemaphoreSlim = new SemaphoreSlim(MaxConcurrentJobs);
+
+                int totalTasks = TaskCollections.Count;
+                int completedTasks = 0;
+
+                while (completedTasks < totalTasks)
+                {
+                    var tasksToExecute = new List<TaskModel>();
+
+                    // Uzmi sve taskove visokog prioriteta
+                    var highPriorityTasks = TaskCollections
+                        .Where(task => task.State == TaskState.NotStarted && task.TaskPriority == Priority.High)
+                        .Take(MaxConcurrentJobs);
+
+                    tasksToExecute.AddRange(highPriorityTasks);
+
+                    // Ako nema dovoljno taskova visokog prioriteta, uzmi taskove normalnog prioriteta
+                    if (tasksToExecute.Count < MaxConcurrentJobs)
+                    {
+                        var normalPriorityTasks = TaskCollections
+                            .Where(task => task.State == TaskState.NotStarted && task.TaskPriority == Priority.Normal)
+                            .Take(MaxConcurrentJobs - tasksToExecute.Count);
+
+                        tasksToExecute.AddRange(normalPriorityTasks);
+                    }
+
+                    // Ako nema dovoljno ni taskova normalnog prioriteta, uzmi taskove niskog prioriteta
+                    if (tasksToExecute.Count < MaxConcurrentJobs)
+                    {
+                        var lowPriorityTasks = TaskCollections
+                            .Where(task => task.State == TaskState.NotStarted && task.TaskPriority == Priority.Low)
+                            .Take(MaxConcurrentJobs - tasksToExecute.Count);
+
+                        tasksToExecute.AddRange(lowPriorityTasks);
+                    }
+
+                    if (tasksToExecute.Count == 0)
+                        break;
+
+                    await SemaphoreSlim.WaitAsync();
+
+                    try
+                    {
+                        var taskExecutions = tasksToExecute.Select(async task =>
+                        {
+                            await task.StartTaskActionAsync();
+                            Interlocked.Increment(ref completedTasks);
+                        });
+
+                        await Task.WhenAll(taskExecutions);
+                    }
+                    finally
+                    {
+                        SemaphoreSlim.Release();
+                    }
+                }
+            });
+        }
+
+
+
+
+
+
     }
 }

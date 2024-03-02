@@ -32,20 +32,17 @@
                     <Grid Margin="0,5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="240" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="60" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
                             <StackPanel>
-                                <TextBlock Text="{Binding Subject}"
+                                <TextBlock Text="{Binding Name}"
                                            FontSize="18"
                                            FontFamily="Arial"
                                            HorizontalAlignment="Left"/>
@@ -65,7 +62,7 @@
                                            FontFamily="Arial"
                                            HorizontalAlignment="Left"/>
 
-                                <TextBlock Text="{Binding Priority}"
+                                <TextBlock Text="{Binding TaskPriority}"
                                            FontSize="11"
                                            Margin="2,0"
                                            HorizontalAlignment="Left"/>
@@ -87,20 +84,6 @@
 
                         <Grid Grid.Column="3">
                             <StackPanel>
-                                <TextBlock Text="Type"
-                                           FontSize="15"
-                                           FontFamily="Arial"
-                                           HorizontalAlignment="Left"/>
-                                
-                                <TextBlock Text="{Binding ProjectType}"
-                                           FontSize="11"
-                                           Margin="2,0"
-                                           HorizontalAlignment="Left"/>
-                            </StackPanel>
-                        </Grid>
-
-                        <Grid Grid.Column="4">
-                            <StackPanel>
                                 <TextBlock Text="Progress"
                                            FontSize="15"
                                            FontFamily="Arial"
@@ -114,38 +97,38 @@
                             </StackPanel>
                         </Grid>
 
-                        <Grid Grid.Column="5">
-                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickStart">
-                                <Button.Content>
-                                    <Image Source="/Assets/Images/play.png" Width="30" Height="30"></Image>
-                                </Button.Content>
-                            </Button>
-                        </Grid>
+                        <Button Grid.Column="4" 
+                                Command="{Binding DataContext.StartTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Center"
+                                FontSize="23"
+                                Foreground="{DynamicResource SuccessFontBrush}"
+                                Style="{DynamicResource IconOnlyButtonStyle}"
+                                Content="{DynamicResource  StartIcon}" />
 
-                        <Grid Grid.Column="6">
-                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickPause">
-                                <Button.Content>
-                                    <Image Source="/Assets/Images/pause.png" Width="30" Height="30"></Image>
-                                </Button.Content>
-                            </Button>
-                        </Grid>
+                        <Button Grid.Column="5" 
+                                Command="{Binding DataContext.StopTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Left"
+                                FontSize="23"
+                                Foreground="{DynamicResource DangerFontBrush}"
+                                Style="{DynamicResource IconOnlyButtonStyle}"
+                                Content="{DynamicResource  StopIcon}" />
 
-                        <Grid Grid.Column="7">
-                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickStop">
-                                <Button.Content>
-                                    <Image Source="/Assets/Images/stop.png" Width="30" Height="30"></Image>
-                                </Button.Content>
-                            </Button>
-                        </Grid>
-
-                        <Grid Grid.Column="8">
-                            <Button Background="{x:Null}" IsEnabled="{Binding IsEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Click="ClickDelete">
-                                <Button.Content>
-                                    <Image Source="/Assets/Images/delete.png" Width="30" Height="30"></Image>
-                                </Button.Content>
-                            </Button>
-                        </Grid>
-
+                        <Button Grid.Column="6" 
+                                Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Left"
+                                FontSize="23"
+                                Foreground="{DynamicResource InactiveFontBrush}"
+                                Style="{DynamicResource IconOnlyButtonStyle}"
+                                Content="{DynamicResource  DeleteIcon}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -154,8 +137,7 @@
         <Grid Grid.Row="2"
               Margin="5,15">
             <Button Content="Create task"
-                    Command="{Binding NavigateCreateViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    IsEnabled="{Binding IsEnabled}"
+                    Command="{Binding NavigateCreateViewCommand}"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Width="180"
@@ -170,7 +152,7 @@
                            Height="30"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
-                <TextBox Text="{Binding MaxConcurrentJobs}"
+                <TextBox Text="{Binding MaxConcurrentJobs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                          Name="MaxConcurrentJobsNumber"
                          Width="50"
                          Height="20"
@@ -179,14 +161,13 @@
                          HorizontalContentAlignment="Center"
                          FontSize="12"/>
                 <Button Content="START"
-                        Command="{Binding EnableViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Command="{Binding StartAllTasksCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                         Width="50"
                         Height="20"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         HorizontalContentAlignment="Center"
-                        FontSize="12" 
-                        Click="Initialize"/>
+                        FontSize="12" />
             </StackPanel>
         </Grid>
     </Grid>

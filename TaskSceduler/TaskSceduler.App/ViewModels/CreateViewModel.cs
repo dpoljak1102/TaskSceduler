@@ -1,10 +1,13 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using TaskSceduler.App.Core;
 using TaskSceduler.App.Models;
 using TaskSceduler.App.Service.Common;
+using static TaskSceduler.App.Models.TaskModel;
 
 namespace TaskSceduler.App.ViewModels
 {
@@ -95,25 +98,112 @@ namespace TaskSceduler.App.ViewModels
             // TODO: better implementation
             AvailablePriority = new ObservableCollection<string>{"Low","Normal","High"};
 
-            // Here we sent some data, we don't care what it is inside!
-            // Logic of the HomeViewModel is to process that data
-            CreateNewTaskCommand = new RelayCommand(obj => { NavigationService.NavigateTo<HomeViewModel>(
-                new TaskModel
-                {
-                    // TODO : match GUI and this bindings for all fields
 
-                    // This get from View/Gui data and bind here 
-                    TrackerId = Guid.NewGuid(),
-                    Subject = Subject,
-                    ProjectType = "B",
-                    Status = "New",
-                    Priority = Priority,
-                    StartDate = StartDate,
-                    DueDate = DueDate,
-                    PercentageDone = 50,
-                    ExecutionTime = ExecutionTime
-                });
-            });
+            asyncMethods = new Func<TaskModel, Task>[]
+            {
+                AsyncMethodA,
+                AsyncMethodB,
+                AsyncMethodC,
+                AsyncMethodD
+            };
+
+            CreateNewTaskCommand = new RelayCommand(obj => { NavigationService.NavigateTo<HomeViewModel>(CreateTask());});
         }
+
+
+        private Random random = new Random();
+        private Func<TaskModel, Task>[] asyncMethods;
+
+        private TaskModel CreateTask()
+        {
+            int index = random.Next(0, asyncMethods.Length);
+
+            Func<TaskModel, Task> selectedMethod = asyncMethods[index];
+
+            TaskModel task = new TaskModel
+            {
+                TrackerId = Guid.NewGuid(),
+                Name = GenerateRandomName(),
+                TaskPriority = GenerateRandomPriority(),
+                StartDate = StartDate,
+                DueDate = DueDate,
+                PercentageDone = 0,
+            };
+
+            task.TaskAction = async () => await selectedMethod(task);
+
+            return task;
+        }
+
+        private async Task AsyncMethodA(TaskModel taskModel)
+        {
+            while (taskModel.PercentageDone != 100)
+            {
+                if (taskModel.CancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                taskModel.PercentageDone = taskModel.PercentageDone + 15;
+                await Task.Delay(2000);
+            }
+        }
+
+        private async Task AsyncMethodB(TaskModel taskModel)
+        {
+            while (taskModel.PercentageDone != 100)
+            {
+                if (taskModel.CancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                taskModel.PercentageDone = taskModel.PercentageDone + 15;
+                await Task.Delay(1500);
+            }
+        }
+
+        private async Task AsyncMethodC(TaskModel taskModel)
+        {
+            while (taskModel.PercentageDone != 100)
+            {
+                if (taskModel.CancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                taskModel.PercentageDone = taskModel.PercentageDone + 15;
+                await Task.Delay(500);
+            }
+        }
+
+        private async Task AsyncMethodD(TaskModel taskModel)
+        {
+            while (taskModel.PercentageDone != 100)
+            {
+                if (taskModel.CancellationTokenSource.IsCancellationRequested)
+                    return;
+
+                taskModel.PercentageDone = taskModel.PercentageDone + 1;
+                await Task.Delay(1000);
+            }
+        }
+
+        private string GenerateRandomName()
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+            string randomString = new string(Enumerable.Repeat(chars, 4)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+
+            return randomString;
+        }
+
+        private Priority GenerateRandomPriority()
+        {
+            Random random = new Random();
+
+            Array values = Enum.GetValues(typeof(Priority));
+
+            int index = random.Next(values.Length);
+
+            return (Priority)values.GetValue(index);
+        }
+
     }
 }

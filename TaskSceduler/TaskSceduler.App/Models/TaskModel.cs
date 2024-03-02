@@ -2,12 +2,26 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TaskSceduler.App.Core;
-using TaskSceduler.App.Service.Common;
 
 namespace TaskSceduler.App.Models
 {
-    public class TaskModel:ObservableObject
+    public class TaskModel : ObservableObject
     {
+        public enum TaskState
+        {
+            NotStarted,
+            Running,
+            Paused,
+            Stopped,
+            Finished
+        }
+
+        public enum Priority
+        {
+            High,
+            Normal,
+            Low
+        }
 
         private Guid _trackerId = Guid.NewGuid();
         public Guid TrackerId
@@ -16,46 +30,32 @@ namespace TaskSceduler.App.Models
             set { _trackerId = value; OnPropertyChanged(); }
         }
 
-        private string _subject = "";
-        public string Subject
+        private string _name;
+        public string Name
         {
-            get { return _subject; }
-            set { _subject = value; OnPropertyChanged(); }
+            get { return _name; }
+            set { _name = value; OnPropertyChanged(); }
         }
 
-        private string _projectType = "";
-        public string ProjectType
+        private Priority _taskPriority = Priority.Low;
+        public Priority TaskPriority
         {
-            get { return _projectType; }
-            set { _projectType = value; OnPropertyChanged(); }
+            get { return _taskPriority; }
+            set { _taskPriority = value; OnPropertyChanged(); }
         }
 
-        private string _status = "";
-		public string Status
-		{
-			get { return _status; }
-			set { _status = value; OnPropertyChanged(); }
-		}
-
-		private string _priority = "";
-		public string Priority
+        private DateTime _startDate = DateTime.Now;
+        public DateTime StartDate
         {
-			get { return _priority; }
-			set { _priority = value; OnPropertyChanged(); }
-		}
-
-		private DateTime _startDate = DateTime.Now;
-		public DateTime StartDate
-		{
-			get { return _startDate;}
-			set { _startDate = value; OnPropertyChanged();}
-		}
+            get { return _startDate; }
+            set { _startDate = value; OnPropertyChanged(); }
+        }
 
         private DateTime _dueDate;
         public DateTime DueDate
         {
             get { return _dueDate; }
-            set { _dueDate = value; OnPropertyChanged();}
+            set { _dueDate = value; OnPropertyChanged(); }
         }
 
         private int _percentageDone;
@@ -66,158 +66,65 @@ namespace TaskSceduler.App.Models
             {
                 if (value < 0)
                     _percentageDone = 0;
-                else if (value > 100)
+                else if (value >= 100)
+                {
                     _percentageDone = 100;
+                    State = TaskState.Finished;
+                }
                 else
                     _percentageDone = value;
                 OnPropertyChanged();
             }
         }
 
-        private int _executionTime;
-        public int ExecutionTime
-        {
-            get { return _executionTime; }
-            set { _executionTime = value; OnPropertyChanged(); }
-        }
-
-        public enum TaskState
-        {
-            NotStarted,
-            Running,
-            Paused,
-            Stopped,
-            Finished
-        }
-
         private TaskState _state = TaskState.NotStarted;
-        public TaskState State {
+        public TaskState State
+        {
             get { return _state; }
-            set {  _state = value; OnPropertyChanged(); }
+            set { _state = value; OnPropertyChanged(); }
         }
 
-        private readonly object _lock = new();
-        internal Action OnPaused { get; set; } = () => { };
-        internal Action OnStopped { get; set; } = () => { };
-        internal Action OnFinished { get; set; } = () => { };
-        internal Action<TaskModel> OnResumeRequested { get; set; } = (TaskModel task) => { };
-
-        private IUserJob _job;
-        public IUserJob Job { get { return _job; } set { _job = value; } }
-
-
-        //Dummy task for later
-        public async void StartUpdatingPercentage()
+        private Func<Task> _taskAction;
+        public Func<Task> TaskAction
         {
-            while (PercentageDone < 100) 
+            get { return _taskAction; }
+            set { _taskAction = value; OnPropertyChanged(); }
+        }
+
+        private CancellationTokenSource _cancellationTokenSource;
+        public CancellationTokenSource CancellationTokenSource
+        {
+            get { return _cancellationTokenSource; }
+            set { _cancellationTokenSource = value; OnPropertyChanged(); }
+        }
+
+        public async Task StartTaskActionAsync()
+        {
+            if (CancellationTokenSource == null || CancellationTokenSource.IsCancellationRequested)
             {
-                UpdatePercentageDoneAsync();
-                await Task.Delay(1000); 
+                CancellationTokenSource = new CancellationTokenSource();
             }
-            State = TaskState.Finished;
-        }
 
-        private void UpdatePercentageDoneAsync()
-        {
-            Random random = new Random();
-            var randomPercentage = random.Next(5, 20);
+            State = TaskState.Running;
 
-            PercentageDone += randomPercentage;
-         
-            App.Current.Dispatcher.Invoke(() =>
+            var cancellationTokenSource = CancellationTokenSource = new CancellationTokenSource();
+
+            try
             {
-                OnPropertyChanged(nameof(PercentageDone));
-            });
-        }
-
-        internal void Start() //Resume ujedno
-        {
-            lock (_lock)
+                await TaskAction?.Invoke();
+            }
+            finally
             {
-                switch (_state)
-                {
-                    case TaskState.NotStarted:
-                        StartUpdatingPercentage();
-                        State = TaskState.Running;
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            OnPropertyChanged(nameof(State));
-                        });
-                        break; //TODO
-                    case TaskState.Running:
-                        break; //Ignore if already running
-                    case TaskState.Paused:
-                        OnResumeRequested(this);
-                        StartUpdatingPercentage();
-                        State = TaskState.Running;
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            OnPropertyChanged(nameof(State));
-                        });
-                        break; //TODO
-                    case TaskState.Stopped:
-                        throw new InvalidOperationException("Cant start a task once its stopped!");
-                    case TaskState.Finished:
-                        throw new InvalidOperationException("Cant start a task that is already finished!");
-                }
+                cancellationTokenSource.Dispose();
             }
         }
 
-        internal void Pause()
+        public void StopTaskAction()
         {
-            lock (_lock)
+            if (State == TaskState.Running)
             {
-                switch (_state)
-                {
-                    case TaskState.NotStarted:
-                        throw new InvalidOperationException("Cant pause a task that is not started!");
-                    case TaskState.Running:
-                        OnPaused();
-                        State = TaskState.Paused;
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            OnPropertyChanged(nameof(State));
-                        });
-                        break; //TODO
-                    case TaskState.Paused:
-                        break; //Ignore
-                    case TaskState.Stopped:
-                        throw new InvalidOperationException("Cant pause a task that is stopped!");
-                    case TaskState.Finished:
-                        throw new InvalidOperationException("Cant pause a task that is already finished!");
-                }
-            }
-        }
-
-        internal void Stop()
-        {
-            lock (_lock)
-            {
-                switch (_state)
-                {
-                    case TaskState.NotStarted:
-                        throw new InvalidOperationException("Cant stop a task that is not started!");
-                    case TaskState.Running:
-                        OnStopped();
-                        State = TaskState.Stopped;
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            OnPropertyChanged(nameof(State));
-                        });
-                        break; //TODO
-                    case TaskState.Paused:
-                        OnStopped();
-                        this.State = TaskState.Stopped;
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            OnPropertyChanged(nameof(State));
-                        });
-                        break; //TODO
-                    case TaskState.Stopped:
-                        break; //Ignore
-                    case TaskState.Finished:
-                        throw new InvalidOperationException("Cant stop a task that is finished!");
-                }
+                this.CancellationTokenSource?.Cancel();
+                State = TaskState.Stopped;
             }
         }
     }

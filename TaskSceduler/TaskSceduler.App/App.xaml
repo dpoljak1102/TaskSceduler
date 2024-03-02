@@ -8,6 +8,9 @@
         <ResourceDictionary>
 
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Assets/Colors/Colors.xaml" />
+                <ResourceDictionary Source="Assets/Buttons/ButtonStyle.xaml" />
+                <ResourceDictionary Source="Assets/Icons/Icons.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!--#region UserControlers-->

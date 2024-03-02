@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <Color x:Key="IconColor">#FFFFFF</Color>
+    <SolidColorBrush x:Key="IconBrush" Color="{StaticResource IconColor}" />
+
+    <Color x:Key="InactiveFontColor">#838383</Color>
+    <SolidColorBrush x:Key="InactiveFontBrush" Color="{StaticResource InactiveFontColor}" />
+
+    <Color x:Key="DangerFontColor">#ff0000</Color>
+    <SolidColorBrush x:Key="DangerFontBrush" Color="{StaticResource DangerFontColor}" />
+
+    <Color x:Key="SuccessFontColor">#2E7D32</Color>
+    <SolidColorBrush x:Key="SuccessFontBrush" Color="{StaticResource SuccessFontColor}" />
+
+</ResourceDictionary>
