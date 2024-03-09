@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:TaskSceduler.App.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
+    <ScrollViewer>
+        
     <Grid Margin="10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"></RowDefinition>
@@ -19,7 +22,7 @@
                        FontSize="23"/>
             <Separator VerticalAlignment="Bottom" />
         </Grid>
-        
+
         <ListView Grid.Row="1"
                   Background="#c2e4e9"
                   BorderThickness="0"
@@ -34,9 +37,13 @@
                             <ColumnDefinition Width="240" />
                             <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="120" />
                             <ColumnDefinition Width="200" />
-                            <ColumnDefinition Width="60" />
-                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
@@ -46,13 +53,13 @@
                                            FontSize="18"
                                            FontFamily="Arial"
                                            HorizontalAlignment="Left"/>
-                                
+
                                 <TextBlock Text="{Binding TrackerId}"
                                            FontSize="11"
                                            Margin="2,0"
                                            HorizontalAlignment="Left"/>
                             </StackPanel>
-                            
+
                         </Grid>
 
                         <Grid Grid.Column="1">
@@ -68,7 +75,7 @@
                                            HorizontalAlignment="Left"/>
                             </StackPanel>
                         </Grid>
-                        
+
                         <Grid Grid.Column="2">
                             <StackPanel>
                                 <TextBlock Text="State"
@@ -84,6 +91,32 @@
 
                         <Grid Grid.Column="3">
                             <StackPanel>
+                                <TextBlock Text="Start Date"
+                                           FontSize="15"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding StartDate, StringFormat='dd-MM-yyyy HH:mm:ss'}"
+                                           FontSize="11"
+                                           Margin="2,0"
+                                           HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="4">
+                            <StackPanel>
+                                <TextBlock Text="Due Date"
+                                           FontSize="15"
+                                           FontFamily="Arial"
+                                           HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding DueDate, StringFormat='dd-MM-yyyy HH:mm:ss'}"
+                                           FontSize="11"
+                                           Margin="2,0"
+                                           HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Column="5">
+                            <StackPanel>
                                 <TextBlock Text="Progress"
                                            FontSize="15"
                                            FontFamily="Arial"
@@ -97,7 +130,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <Button Grid.Column="4" 
+                        <Button Grid.Column="6" 
                                 Command="{Binding DataContext.StartTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                 CommandParameter="{Binding}"
                                 Width="30"
@@ -108,23 +141,34 @@
                                 Style="{DynamicResource IconOnlyButtonStyle}"
                                 Content="{DynamicResource  StartIcon}" />
 
-                        <Button Grid.Column="5" 
+                        <Button Grid.Column="7"
+                                Command="{Binding DataContext.PauseTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"
+                                Width="30"
+                                Height="30"
+                                HorizontalAlignment="Center"
+                                FontSize="23"
+                                Foreground="{DynamicResource RestFontBrush}"
+                                Style="{DynamicResource IconOnlyButtonStyle}"
+                                Content="{DynamicResource  PauseIcon}" />
+
+                        <Button Grid.Column="8" 
                                 Command="{Binding DataContext.StopTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                 CommandParameter="{Binding}"
                                 Width="30"
                                 Height="30"
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Center"
                                 FontSize="23"
                                 Foreground="{DynamicResource DangerFontBrush}"
                                 Style="{DynamicResource IconOnlyButtonStyle}"
                                 Content="{DynamicResource  StopIcon}" />
 
-                        <Button Grid.Column="6" 
+                        <Button Grid.Column="9" 
                                 Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                 CommandParameter="{Binding}"
                                 Width="30"
                                 Height="30"
-                                HorizontalAlignment="Left"
+                                HorizontalAlignment="Center"
                                 FontSize="23"
                                 Foreground="{DynamicResource InactiveFontBrush}"
                                 Style="{DynamicResource IconOnlyButtonStyle}"
@@ -162,6 +206,7 @@
                          FontSize="12"/>
                 <Button Content="START"
                         Command="{Binding StartAllTasksCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        IsEnabled="{Binding IsEnabled}"
                         Width="50"
                         Height="20"
                         HorizontalAlignment="Center"
@@ -171,4 +216,6 @@
             </StackPanel>
         </Grid>
     </Grid>
+    </ScrollViewer>
+    
 </UserControl>

@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow"
         Height="650"
-        Width="1000"
+        Width="1100"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <ContentControl Content="{Binding NavigationService.CurrentView, UpdateSourceTrigger=PropertyChanged}" />

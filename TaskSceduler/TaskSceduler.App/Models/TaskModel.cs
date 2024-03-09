@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using TaskSceduler.App.Core;
@@ -44,7 +45,7 @@ namespace TaskSceduler.App.Models
             set { _taskPriority = value; OnPropertyChanged(); }
         }
 
-        private DateTime _startDate = DateTime.Now;
+        private DateTime _startDate;
         public DateTime StartDate
         {
             get { return _startDate; }
@@ -84,6 +85,13 @@ namespace TaskSceduler.App.Models
             set { _state = value; OnPropertyChanged(); }
         }
 
+        private int _executionTime;
+        public int ExecutionTime
+        {
+            get { return _executionTime; }
+            set { _executionTime = value; OnPropertyChanged(); }
+        }
+
         private Func<Task> _taskAction;
         public Func<Task> TaskAction
         {
@@ -100,22 +108,40 @@ namespace TaskSceduler.App.Models
 
         public async Task StartTaskActionAsync()
         {
+            if (State == TaskState.Stopped || StartDate > DateTime.Now || DueDate < DateTime.Now)
+                return;
+
+            if (DueDate.Date == DateTime.Today)
+            {
+                TimeSpan adjustedExecutionTime = DueDate.TimeOfDay - DateTime.Now.TimeOfDay;
+                if (adjustedExecutionTime.TotalMilliseconds < ExecutionTime)
+                {
+                    ExecutionTime = (int)adjustedExecutionTime.TotalMilliseconds;
+                }
+            }
+
             if (CancellationTokenSource == null || CancellationTokenSource.IsCancellationRequested)
             {
-                CancellationTokenSource = new CancellationTokenSource();
+                CancellationTokenSource = new CancellationTokenSource(ExecutionTime);
             }
 
             State = TaskState.Running;
 
-            var cancellationTokenSource = CancellationTokenSource = new CancellationTokenSource();
+            var cancellationTokenSource = CancellationTokenSource = new CancellationTokenSource(ExecutionTime);
 
+            Stopwatch stopwatch = Stopwatch.StartNew();
             try
             {
                 await TaskAction?.Invoke();
             }
             finally
             {
+                stopwatch.Stop();
                 cancellationTokenSource.Dispose();
+                if (stopwatch.ElapsedMilliseconds > ExecutionTime)
+                    State = TaskState.Stopped;
+                else if (stopwatch.ElapsedMilliseconds < ExecutionTime)
+                    ExecutionTime -= ((int)stopwatch.ElapsedMilliseconds);
             }
         }
 
@@ -125,6 +151,17 @@ namespace TaskSceduler.App.Models
             {
                 this.CancellationTokenSource?.Cancel();
                 State = TaskState.Stopped;
+            }
+            else if (State == TaskState.Paused)
+                State = TaskState.Stopped;
+        }
+
+        public void PauseTaskAction()
+        {
+            if (State == TaskState.Running)
+            {
+                this.CancellationTokenSource?.Cancel();
+                State = TaskState.Paused;
             }
         }
     }

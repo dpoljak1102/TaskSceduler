@@ -37,7 +37,7 @@ namespace TaskSceduler.App.ViewModels
         public string Subject
         {
             get { return _subject; }
-            set { _subject = value;OnPropertyChanged();}
+            set { _subject = value;OnPropertyChanged(); }
         }
 
         private string _projectType;
@@ -47,32 +47,64 @@ namespace TaskSceduler.App.ViewModels
             set { _projectType = value; OnPropertyChanged(); }
         }
 
-        private string _status;
-        public string Status
-        {
-            get { return _status; }
-            set { _status = value; OnPropertyChanged(); }
-        }
-
-        private string _priority;
-        public string Priority
+        private Priority _priority;
+        public Priority Priority
         {
             get { return _priority; }
             set { _priority = value; OnPropertyChanged(); }
         }
 
-        private DateTime _startDate = DateTime.Now;
+        private DateTime _startDate = DateTime.Today;
         public DateTime StartDate
         {
             get { return _startDate; }
-            set { _startDate = value; OnPropertyChanged(); }
+            set {
+                if (value <= DueDate)
+                {
+                    _startDate = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
-        private DateTime _dueDate = DateTime.Now.AddDays(7);
+        private TimeSpan _startTime = DateTime.Now.TimeOfDay;
+        public TimeSpan StartTime
+        {
+            get { return _startTime; }
+            set {
+                if (IsValidTime(value, true))
+                {
+                    _startTime = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private DateTime _dueDate = DateTime.Today.AddDays(7);
         public DateTime DueDate
         {
             get { return _dueDate; }
-            set { _dueDate = value; OnPropertyChanged(); }
+            set {
+                if (value >= StartDate)
+                {
+                    _dueDate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private TimeSpan _dueTime = DateTime.Now.TimeOfDay;
+        public TimeSpan DueTime
+        {
+            get { return _dueTime; }
+            set
+            {
+                if (IsValidTime(value, false))
+                {
+                    _dueTime = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private string _percentageDone;
@@ -82,7 +114,7 @@ namespace TaskSceduler.App.ViewModels
             set { _percentageDone = value; OnPropertyChanged(); }
         }
 
-        private int _executionTime;
+        private int _executionTime = 8000;
         public int ExecutionTime
         {
             get { return _executionTime; }
@@ -123,10 +155,11 @@ namespace TaskSceduler.App.ViewModels
             TaskModel task = new TaskModel
             {
                 TrackerId = Guid.NewGuid(),
-                Name = GenerateRandomName(),
-                TaskPriority = GenerateRandomPriority(),
-                StartDate = StartDate,
-                DueDate = DueDate,
+                Name = Subject,
+                TaskPriority = Priority,
+                ExecutionTime = ExecutionTime,
+                StartDate = StartDate + StartTime,
+                DueDate = DueDate + DueTime,
                 PercentageDone = 0,
             };
 
@@ -178,9 +211,19 @@ namespace TaskSceduler.App.ViewModels
                 if (taskModel.CancellationTokenSource.IsCancellationRequested)
                     return;
 
-                taskModel.PercentageDone = taskModel.PercentageDone + 1;
+                taskModel.PercentageDone = taskModel.PercentageDone + 2;
                 await Task.Delay(1000);
             }
+        }
+
+        private bool IsValidTime(TimeSpan time, bool isStartTime)
+        {
+            if (StartDate == DueDate && (time >= DueTime && isStartTime || StartTime >= time && !isStartTime))
+                return false;
+
+            return (time.Hours >= 0 && time.Hours <= 23) && 
+                   (time.Minutes >= 0 && time.Minutes <= 59) &&
+                   (time.Seconds >= 0 && time.Seconds <= 59);
         }
 
         private string GenerateRandomName()

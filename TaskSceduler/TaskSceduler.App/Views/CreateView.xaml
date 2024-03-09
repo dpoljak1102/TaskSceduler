@@ -104,8 +104,7 @@
                              Margin="0,10,0,0" FontFamily="Arial Rounded MT Bold"
                              FontSize="15"
                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                             GotFocus="beginTimeBox_GotFocus"
-                             Text="{Binding StartDate, StringFormat=HH:mm:ss, Mode=TwoWay}"/>
+                             Text="{Binding StartTime, Mode=TwoWay}"/>
                     <CheckBox x:Name="DeadlineCheckBox" Content="Deadline" Width="100" HorizontalAlignment="Center" VerticalAlignment="Center" Height="25" Margin="0,30,0,0" FontFamily="Arial Rounded MT Bold" FontSize="15" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                     <DatePicker IsEnabled="{Binding IsChecked, ElementName=DeadlineCheckBox}"
                                 Height="30" Width="180"
@@ -119,15 +118,13 @@
                              x:Name="deadlineTimeBox"
                              Height="30"
                              TextWrapping="Wrap"
-                             Text="{Binding DueDate, StringFormat=HH:mm:ss, Mode=TwoWay}"
+                             Text="{Binding DueTime, Mode=TwoWay}"
                              Width="180"
                              FontFamily="Arial Rounded MT Bold"
                              FontSize="15"
                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                             GotFocus="deadlineTimeBox_GotFocus" 
                              Margin="0,10,0,0" 
-                             HorizontalAlignment="Center"
-                             TextChanged="deadlineTimeBox_TextChanged"/>
+                             HorizontalAlignment="Center"/>
                     <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                     <Button Content="Cancel"
                     Command="{Binding NavigateHomeViewCommand, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

@@ -29,28 +29,5 @@ namespace TaskSceduler.App.Views
         {
 
         }
-
-        private void beginTimeBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (beginTimeBox.Text == "HH-mm-ss")
-            {
-                beginTimeBox.Text = "";
-                beginTimeBox.Foreground = Brushes.Black;
-            }
-        }
-
-        private void deadlineTimeBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (deadlineTimeBox.Text == "HH-mm-ss")
-            {
-                deadlineTimeBox.Text = "";
-                deadlineTimeBox.Foreground = Brushes.Black;
-            }
-        }
-
-        private void deadlineTimeBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
     }
 }

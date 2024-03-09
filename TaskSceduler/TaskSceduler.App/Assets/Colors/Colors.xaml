@@ -14,4 +14,7 @@
     <Color x:Key="SuccessFontColor">#2E7D32</Color>
     <SolidColorBrush x:Key="SuccessFontBrush" Color="{StaticResource SuccessFontColor}" />
 
+    <Color x:Key="RestFontColor">#4169E1</Color>
+    <SolidColorBrush x:Key="RestFontBrush" Color="{StaticResource RestFontColor}"/>
+
 </ResourceDictionary>
